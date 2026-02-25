@@ -26,25 +26,25 @@ dev:
 	RUST_LOG=$(RUST_LOG) cargo watch \
 		--skip-local-deps \
 		-w Cargo.toml \
-		-w kaku-gui \
+		-w steklo-gui \
 		-w window \
 		-w term \
 		-w mux \
 		-w config \
-		-w kaku \
+		-w steklo \
 		-w lua-api-crates \
 		-i "dist/**" \
 		-i "deps/**" \
-		-x "run $(BUILD_OPTS) -p kaku-gui --"
+		-x "run $(BUILD_OPTS) -p steklo-gui --"
 
 build:
-	cargo build $(BUILD_OPTS) -p kaku -p kaku-gui -p wezterm-mux-server-impl
+	cargo build $(BUILD_OPTS) -p steklo -p steklo-gui -p wezterm-mux-server-impl
 
 fmt:
-	cargo +nightly fmt -p kaku -p kaku-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font
+	cargo +nightly fmt -p steklo -p steklo-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font
 
 fmt-check:
-	cargo +nightly fmt -p kaku -p kaku-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font -- --check
+	cargo +nightly fmt -p steklo -p steklo-gui -p mux -p wezterm-term -p termwiz -p config -p wezterm-font -- --check
 	@echo "Format check passed."
 
 install-tools:

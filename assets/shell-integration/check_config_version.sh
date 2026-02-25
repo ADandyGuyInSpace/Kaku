@@ -1,5 +1,5 @@
 #!/bin/bash
-# Kaku config version check
+# Steklo config version check
 
 set -euo pipefail
 
@@ -9,10 +9,10 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 CURRENT_CONFIG_VERSION=11
-CONFIG_DIR="$HOME/.config/kaku"
+CONFIG_DIR="$HOME/.config/steklo"
 STATE_FILE="$CONFIG_DIR/state.json"
-LEGACY_VERSION_FILE="$CONFIG_DIR/.kaku_config_version"
-LEGACY_GEOMETRY_FILE="$CONFIG_DIR/.kaku_window_geometry"
+LEGACY_VERSION_FILE="$CONFIG_DIR/.steklo_config_version"
+LEGACY_GEOMETRY_FILE="$CONFIG_DIR/.steklo_window_geometry"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMMON_SCRIPT="$SCRIPT_DIR/state_common.sh"
 
@@ -59,7 +59,7 @@ if [[ $user_version -eq 0 || $user_version -ge $CURRENT_CONFIG_VERSION ]]; then
 	exit 0
 fi
 
-echo -e "${BOLD}Kaku config update available!${NC} v$user_version -> v$CURRENT_CONFIG_VERSION"
+echo -e "${BOLD}Steklo config update available!${NC} v$user_version -> v$CURRENT_CONFIG_VERSION"
 echo ""
 
 # Show only current release highlights to keep this prompt short and maintainable.
@@ -72,7 +72,7 @@ case "$CURRENT_CONFIG_VERSION" in
 	echo "  • Plain/Cmd+arrow collapses selection without stale region highlight"
 	echo "  • ESC cancels active selection"
 	echo "  • Fixed: delete key no longer removes entire word after Chinese IME input"
-	echo "  • Fixed: sudo + nano no longer fails with unknown terminal type 'kaku'"
+	echo "  • Fixed: sudo + nano no longer fails with unknown terminal type 'steklo'"
 	echo "  • AI error fixer: only suggests actions when commands fail"
 	echo "  • One-key apply for latest suggested fix command"
 	;;
@@ -97,7 +97,7 @@ fi
 
 # Apply updates
 if [[ -f "$RESOURCE_DIR/setup_zsh.sh" ]]; then
-	KAKU_SKIP_TOOL_BOOTSTRAP=1 bash "$RESOURCE_DIR/setup_zsh.sh" --update-only
+	STEKLO_SKIP_TOOL_BOOTSTRAP=1 bash "$RESOURCE_DIR/setup_zsh.sh" --update-only
 else
 	echo -e "${YELLOW}Error: missing setup script at $RESOURCE_DIR/setup_zsh.sh${NC}"
 	exit 1
@@ -112,7 +112,7 @@ fi
 
 if [[ ! -f "$HOME/.config/opencode/opencode.json" ]]; then
 	if [[ -f "$RESOURCE_DIR/install_opencode_theme.sh" ]]; then
-		read -p "Set up OpenCode with Kaku-matching theme? [Y/n] " -n 1 -r
+		read -p "Set up OpenCode with Steklo-matching theme? [Y/n] " -n 1 -r
 		echo
 		if [[ ! $REPLY =~ ^[Nn]$ ]]; then
 			bash "$RESOURCE_DIR/install_opencode_theme.sh"
@@ -123,7 +123,7 @@ fi
 persist_config_version
 
 echo ""
-echo -e "\033[1;32m🎃 Kaku environment is ready! Enjoy coding.\033[0m"
+echo -e "\033[1;32m🎃 Steklo environment is ready! Enjoy coding.\033[0m"
 echo ""
 echo "Press any key to continue..."
 read -n 1 -s

@@ -1,20 +1,20 @@
 <div align="center">
-  <h1>Kaku</h1>
+  <h1>Steklo</h1>
   <p><em>A fast, out-of-the-box terminal built for AI coding.</em></p>
 </div>
 
 <p align="center">
-  <a href="https://github.com/tw93/Kaku/stargazers"><img src="https://img.shields.io/github/stars/tw93/Kaku?style=flat-square" alt="Stars"></a>
-  <a href="https://github.com/tw93/Kaku/releases"><img src="https://img.shields.io/github/v/tag/tw93/Kaku?label=version&style=flat-square" alt="Version"></a>
+  <a href="https://github.com/tw93/Steklo/stargazers"><img src="https://img.shields.io/github/stars/tw93/Steklo?style=flat-square" alt="Stars"></a>
+  <a href="https://github.com/tw93/Steklo/releases"><img src="https://img.shields.io/github/v/tag/tw93/Steklo?label=version&style=flat-square" alt="Version"></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License"></a>
-  <a href="https://github.com/tw93/Kaku/commits"><img src="https://img.shields.io/github/commit-activity/m/tw93/Kaku?style=flat-square" alt="Commits"></a>
+  <a href="https://github.com/tw93/Steklo/commits"><img src="https://img.shields.io/github/commit-activity/m/tw93/Steklo?style=flat-square" alt="Commits"></a>
   <a href="https://twitter.com/HiTw93"><img src="https://img.shields.io/badge/follow-Tw93-red?style=flat-square&logo=Twitter" alt="Twitter"></a>
 </p>
 
 <p align="center">
-  <img src="assets/kaku.jpeg" alt="Kaku Screenshot" width="1000" />
+  <img src="assets/steklo.jpeg" alt="Steklo Screenshot" width="1000" />
   <br/>
-  Kaku is a deeply customized fork of <a href="https://github.com/wez/wezterm">WezTerm</a>, designed for an out-of-the-box experience.
+  Steklo is a deeply customized fork of <a href="https://github.com/wez/wezterm">WezTerm</a>, designed for an out-of-the-box experience.
 </p>
 
 ## Features
@@ -26,14 +26,14 @@
 
 ## Quick Start
 
-1. [Download Kaku DMG](https://github.com/tw93/Kaku/releases/latest) & Drag to Applications
-2. Or install with Homebrew: `brew install tw93/tap/kakuku`
-3. Open Kaku. The app is notarized by Apple, so it opens without security warnings
-4. On first launch, Kaku will automatically set up your shell environment
+1. [Download Steklo DMG](https://github.com/tw93/Steklo/releases/latest) & Drag to Applications
+2. Or install with Homebrew: `brew install tw93/tap/stekloku`
+3. Open Steklo. The app is notarized by Apple, so it opens without security warnings
+4. On first launch, Steklo will automatically set up your shell environment
 
 ## Usage Guide
 
-Kaku comes with intuitive macOS-native shortcuts:
+Steklo comes with intuitive macOS-native shortcuts:
 
 | Action | Shortcut |
 | :--- | :--- |
@@ -48,8 +48,8 @@ Kaku comes with intuitive macOS-native shortcuts:
 | Zoom/Unzoom Pane | `Cmd + Shift + Enter` |
 | Resize Pane | `Cmd + Ctrl + Arrows` |
 | Clear Screen | `Cmd + K` |
-| Kaku AI Settings | `Cmd + Shift + A` |
-| Kaku Assistant Apply Suggestion | `Cmd + Shift + E` |
+| Steklo AI Settings | `Cmd + Shift + A` |
+| Steklo Assistant Apply Suggestion | `Cmd + Shift + E` |
 | Open Lazygit | `Cmd + Shift + G` |
 | Yazi File Manager | `Cmd + Shift + Y` or `y` |
 | Font Size | `Cmd + +`, `Cmd + -`, `Cmd + 0` |
@@ -59,7 +59,7 @@ Kaku comes with intuitive macOS-native shortcuts:
 
 ## Configuration
 
-Kaku comes with a carefully curated shell stack for immediate productivity, so you can focus on AI coding without opening vscode:
+Steklo comes with a carefully curated shell stack for immediate productivity, so you can focus on AI coding without opening vscode:
 
 Built-in zsh plugins bundled by default:
 
@@ -68,43 +68,43 @@ Built-in zsh plugins bundled by default:
 - **Syntax Highlighting**: Real-time command validation and coloring.
 - **Autosuggestions**: Intelligent, history-based completions similar to Fish shell.
 
-Optional CLI tools installed via Homebrew during `kaku init`:
+Optional CLI tools installed via Homebrew during `steklo init`:
 
 - **Starship**: A fast, customizable prompt showing git status, package versions, and execution time.
 - **Delta**: A syntax-highlighting pager for git, diff, and grep output.
 - **Lazygit**: A terminal UI for fast, visual Git workflows without leaving the shell.
 - **Yazi**: A terminal file manager. Use `y` to launch it and sync the shell directory on exit.
 
-Kaku uses `~/.config/kaku/kaku.lua` for configuration, fully compatible with WezTerm's Lua API, with built-in defaults at `Kaku.app/Contents/Resources/kaku.lua` as fallback.
+Steklo uses `~/.config/steklo/steklo.lua` for configuration, fully compatible with WezTerm's Lua API, with built-in defaults at `Steklo.app/Contents/Resources/steklo.lua` as fallback.
 
-Run `kaku` in your terminal to see all available commands such as `kaku update`, `kaku reset`, `kaku config`, and `kaku ai`.
+Run `steklo` in your terminal to see all available commands such as `steklo update`, `steklo reset`, `steklo config`, and `steklo ai`.
 
-## Kaku AI
+## Steklo AI
 
-Kaku includes a built-in assistant for command-line error recovery and a unified settings UI for external AI coding tools.
+Steklo includes a built-in assistant for command-line error recovery and a unified settings UI for external AI coding tools.
 
-- **Kaku Assistant**: Automatically analyzes failed commands and prepares a safe command suggestion.
+- **Steklo Assistant**: Automatically analyzes failed commands and prepares a safe command suggestion.
 - **AI Tools Config**: Manage settings for tools like Claude Code, Codex, Gemini CLI, Copilot CLI, Factory Droid, OpenCode, and OpenClaw.
 
-Open AI settings with `kaku ai`, then configure **Kaku Assistant** (enable, model, base URL, API key) and your external AI tools in one place.
+Open AI settings with `steklo ai`, then configure **Steklo Assistant** (enable, model, base URL, API key) and your external AI tools in one place.
 
 Tip: DeepSeek-V3.2 is a great low-cost option to start with for everyday AI coding tasks.
 
-When Kaku Assistant has a suggestion ready after a command error, press `Cmd + Shift + E` to apply it.
+When Steklo Assistant has a suggestion ready after a command error, press `Cmd + Shift + E` to apply it.
 
-## Why Kaku?
+## Why Steklo?
 
 I heavily rely on the CLI for both work and personal projects. Tools I've built, like [Mole](https://github.com/tw93/mole) and [Pake](https://github.com/tw93/pake), reflect this.
 
 I used Alacritty for years and learned to value speed and simplicity. As my workflow shifted toward AI-assisted coding, I wanted stronger tab and pane ergonomics. I also explored Kitty, Ghostty, Warp, and iTerm2. Each is strong in different areas, but I still wanted a setup that matched my own balance of performance, defaults, and control.
 
-WezTerm is robust and highly hackable, and I am grateful for its engine and ecosystem. Kaku builds on that foundation with practical defaults for day one use, while keeping full Lua-based customization and a fast, lightweight feel.
+WezTerm is robust and highly hackable, and I am grateful for its engine and ecosystem. Steklo builds on that foundation with practical defaults for day one use, while keeping full Lua-based customization and a fast, lightweight feel.
 
-So I built Kaku to be that environment: fast, polished, and ready to work.
+So I built Steklo to be that environment: fast, polished, and ready to work.
 
 ### Performance
 
-| Metric | Upstream | Kaku | Methodology |
+| Metric | Upstream | Steklo | Methodology |
 | :--- | :--- | :--- | :--- |
 | **Executable Size** | ~67 MB | ~40 MB | Aggressive symbol stripping & feature pruning |
 | **Resources Volume** | ~100 MB | ~80 MB | Asset optimization & lazy-loaded assets |
@@ -115,37 +115,37 @@ Achieved through aggressive stripping of unused features, lazy loading of color 
 
 ## FAQ
 
-1. **Why is the Homebrew cask named `kakuku` instead of `kaku`?**
+1. **Why is the Homebrew cask named `stekloku` instead of `steklo`?**
 
-   The name `kaku` conflicts with another package in Homebrew's official repository (an unmaintained music player). `kakuku` is a cute variation that's easy to remember.
+   The name `steklo` conflicts with another package in Homebrew's official repository (an unmaintained music player). `stekloku` is a cute variation that's easy to remember.
 
 2. **Is there a Windows or Linux version?**
 
-   Not at the moment. Kaku is currently macOS-only while we focus on polishing the macOS experience. Windows and Linux versions may come later once the macOS version is mature.
+   Not at the moment. Steklo is currently macOS-only while we focus on polishing the macOS experience. Windows and Linux versions may come later once the macOS version is mature.
 
-3. **Can Kaku use transparent windows on macOS?**
+3. **Can Steklo use transparent windows on macOS?**
 
-   Yes. You can set `window_background_opacity` and optionally `macos_window_background_blur` in `~/.config/kaku/kaku.lua`. Transparent mode now keeps top/right/bottom padding regions visually consistent to avoid transparent gaps.
+   Yes. You can set `window_background_opacity` and optionally `macos_window_background_blur` in `~/.config/steklo/steklo.lua`. Transparent mode now keeps top/right/bottom padding regions visually consistent to avoid transparent gaps.
 
 4. **How do I turn off copy on select?**
 
-   Kaku enables copy on select by default; to disable automatic clipboard copy and copy toast after selection, add `config.copy_on_select = false` to `~/.config/kaku/kaku.lua`.
+   Steklo enables copy on select by default; to disable automatic clipboard copy and copy toast after selection, add `config.copy_on_select = false` to `~/.config/steklo/steklo.lua`.
 
 ## Contributors
 
-Big thanks to all contributors who helped build Kaku. Go follow them! ❤️
+Big thanks to all contributors who helped build Steklo. Go follow them! ❤️
 
-<a href="https://github.com/tw93/Kaku/graphs/contributors">
+<a href="https://github.com/tw93/Steklo/graphs/contributors">
   <img src="./CONTRIBUTORS.svg?v=2" width="1000" />
 </a>
 
 ## Support
 
-- If Kaku helped you, star the repo or [share it](https://twitter.com/intent/tweet?url=https://github.com/tw93/Kaku&text=Kaku%20-%20A%20fast%20terminal%20built%20for%20AI%20coding.) with friends.
+- If Steklo helped you, star the repo or [share it](https://twitter.com/intent/tweet?url=https://github.com/tw93/Steklo&text=Steklo%20-%20A%20fast%20terminal%20built%20for%20AI%20coding.) with friends.
 - Got ideas or found bugs? Open an issue/PR or check [CONTRIBUTING.md](CONTRIBUTING.md) for details.
-- Like Kaku? <a href="https://miaoyan.app/cats.html?name=Kaku" target="_blank">Buy Tw93 a Coke</a> to support the project! 🥤 Supporters below.
+- Like Steklo? <a href="https://miaoyan.app/cats.html?name=Steklo" target="_blank">Buy Tw93 a Coke</a> to support the project! 🥤 Supporters below.
 
-<a href="https://miaoyan.app/cats.html?name=Kaku"><img src="https://miaoyan.app/assets/sponsors.svg" width="1000" loading="lazy" /></a>
+<a href="https://miaoyan.app/cats.html?name=Steklo"><img src="https://miaoyan.app/assets/sponsors.svg" width="1000" loading="lazy" /></a>
 
 ## License
 

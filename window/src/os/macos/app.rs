@@ -20,7 +20,7 @@ use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use url::Url;
 
-const CLS_NAME: &str = "KakuAppDelegate";
+const CLS_NAME: &str = "StekloAppDelegate";
 
 thread_local! {
     static LAST_OPEN_UNTITLED_SPAWN: RefCell<Option<Instant>> = RefCell::new(None);
@@ -34,14 +34,14 @@ lazy_static::lazy_static! {
 // materialized yet; keep a wider debounce to avoid duplicate SpawnWindow work.
 const OPEN_UNTITLED_SPAWN_DEBOUNCE: Duration = Duration::from_millis(1200);
 
-fn reap_kaku_autofill_helpers() {
-    // Best-effort cleanup for macOS helper leaks where AutoFill (Kaku)
+fn reap_steklo_autofill_helpers() {
+    // Best-effort cleanup for macOS helper leaks where AutoFill (Steklo)
     // can accumulate across app restarts.
     const SCRIPT: &str = r#"
 for pid in $(pgrep -f 'SafariPlatformSupport.Helper|CredentialProviderExtensionHelper' 2>/dev/null); do
   name=$(lsappinfo info -only name -pid "$pid" 2>/dev/null | sed -n 's/.*"LSDisplayName"="\([^"]*\)".*/\1/p')
   case "$name" in
-    *"(Kaku)"*) kill "$pid" 2>/dev/null || true ;;
+    *"(Steklo)"*) kill "$pid" 2>/dev/null || true ;;
   esac
 done
 "#;
@@ -49,10 +49,10 @@ done
     match Command::new("/bin/sh").arg("-c").arg(SCRIPT).status() {
         Ok(status) if status.success() => {}
         Ok(status) => {
-            log::debug!("reap_kaku_autofill_helpers exited with status {}", status);
+            log::debug!("reap_steklo_autofill_helpers exited with status {}", status);
         }
         Err(err) => {
-            log::warn!("reap_kaku_autofill_helpers failed: {err:#}");
+            log::warn!("reap_steklo_autofill_helpers failed: {err:#}");
         }
     }
 }
@@ -68,8 +68,8 @@ extern "C" fn application_should_terminate(
             WindowCloseConfirmation::AlwaysPrompt => {
                 let alert: id = msg_send![class!(NSAlert), alloc];
                 let alert: id = msg_send![alert, init];
-                let message_text = nsstring("Terminate Kaku?");
-                let info_text = nsstring("Detach and close all panes and terminate Kaku?");
+                let message_text = nsstring("Terminate Steklo?");
+                let info_text = nsstring("Detach and close all panes and terminate Steklo?");
                 let cancel = nsstring("Cancel");
                 let ok = nsstring("Ok");
 
@@ -108,7 +108,7 @@ fn terminate_now() -> u64 {
     // stops. This is the reliable save path for Cmd+Q; window_will_close
     // may not fire for every window before the process exits.
     super::window::on_app_terminating();
-    reap_kaku_autofill_helpers();
+    reap_steklo_autofill_helpers();
     if let Some(conn) = Connection::get() {
         conn.terminate_message_loop();
     }
@@ -121,7 +121,7 @@ extern "C" fn application_will_finish_launching(
     _notif: *mut Object,
 ) {
     log::debug!("application_will_finish_launching");
-    reap_kaku_autofill_helpers();
+    reap_steklo_autofill_helpers();
 }
 
 extern "C" fn application_did_finish_launching(this: &mut Object, _sel: Sel, _notif: *mut Object) {
@@ -177,11 +177,11 @@ extern "C" fn application_open_untitled_file(
     NO
 }
 
-extern "C" fn kaku_perform_key_assignment(_self: &mut Object, _sel: Sel, menu_item: *mut Object) {
+extern "C" fn steklo_perform_key_assignment(_self: &mut Object, _sel: Sel, menu_item: *mut Object) {
     let menu_item = crate::os::macos::menu::MenuItem::with_menu_item(menu_item);
-    // Safe because kakuPerformKeyAssignment: is only used with KeyAssignment
+    // Safe because stekloPerformKeyAssignment: is only used with KeyAssignment
     let action = menu_item.get_represented_item();
-    log::debug!("kaku_perform_key_assignment {action:?}",);
+    log::debug!("steklo_perform_key_assignment {action:?}",);
     match action {
         Some(RepresentedItem::KeyAssignment(action)) => {
             if let Some(conn) = Connection::get() {
@@ -195,7 +195,7 @@ extern "C" fn kaku_perform_key_assignment(_self: &mut Object, _sel: Sel, menu_it
 extern "C" fn show_settings_window(_self: &mut Object, _sel: Sel, _sender: *mut Object) {
     if let Some(conn) = Connection::get() {
         conn.dispatch_app_event(ApplicationEvent::PerformKeyAssignment(
-            KeyAssignment::EmitEvent("open-kaku-config".to_string()),
+            KeyAssignment::EmitEvent("open-steklo-config".to_string()),
         ));
     }
 }
@@ -358,7 +358,7 @@ pub(crate) fn flush_pending_service_opens() {
 }
 
 fn parse_url_action(url: &Url) -> Option<(&str, String)> {
-    if url.scheme() != "kaku" {
+    if url.scheme() != "steklo" {
         return None;
     }
 
@@ -419,7 +419,7 @@ extern "C" fn application_open_urls(
     }
 }
 
-extern "C" fn open_in_kaku_service(
+extern "C" fn open_in_steklo_service(
     _self: &mut Object,
     _sel: Sel,
     pasteboard: *mut Object,
@@ -427,15 +427,15 @@ extern "C" fn open_in_kaku_service(
     _error: *mut Object,
 ) {
     let Some(path) = first_service_path(pasteboard) else {
-        log::warn!("openInKakuService: Finder provided no usable paths");
+        log::warn!("openInStekloService: Finder provided no usable paths");
         return;
     };
 
-    log::debug!("openInKakuService {path}");
+    log::debug!("openInStekloService {path}");
     dispatch_or_queue_service_open(path, true);
 }
 
-extern "C" fn open_in_kaku_window_service(
+extern "C" fn open_in_steklo_window_service(
     _self: &mut Object,
     _sel: Sel,
     pasteboard: *mut Object,
@@ -443,11 +443,11 @@ extern "C" fn open_in_kaku_window_service(
     _error: *mut Object,
 ) {
     let Some(path) = first_service_path(pasteboard) else {
-        log::warn!("openInKakuWindowService: Finder provided no usable paths");
+        log::warn!("openInStekloWindowService: Finder provided no usable paths");
         return;
     };
 
-    log::debug!("openInKakuWindowService {path}");
+    log::debug!("openInStekloWindowService {path}");
     dispatch_or_queue_service_open(path, false);
 }
 
@@ -458,7 +458,7 @@ extern "C" fn application_dock_menu(
 ) -> *mut Object {
     let dock_menu = Menu::new_with_title("");
     let new_window_item =
-        MenuItem::new_with("New Window", Some(sel!(kakuPerformKeyAssignment:)), "");
+        MenuItem::new_with("New Window", Some(sel!(stekloPerformKeyAssignment:)), "");
     new_window_item
         .set_represented_item(RepresentedItem::KeyAssignment(KeyAssignment::SpawnWindow));
     dock_menu.add_item(&new_window_item);
@@ -509,8 +509,8 @@ fn get_class() -> &'static Class {
                     as extern "C" fn(&mut Object, Sel, *mut Object) -> *mut Object,
             );
             cls.add_method(
-                sel!(kakuPerformKeyAssignment:),
-                kaku_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
+                sel!(stekloPerformKeyAssignment:),
+                steklo_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
             );
             // macOS may route "Settings..." through one of these standard selectors
             // instead of our custom menu-item selector.
@@ -528,13 +528,13 @@ fn get_class() -> &'static Class {
                     as extern "C" fn(&mut Object, Sel, *mut Object) -> BOOL,
             );
             cls.add_method(
-                sel!(openInKakuService:userData:error:),
-                open_in_kaku_service
+                sel!(openInStekloService:userData:error:),
+                open_in_steklo_service
                     as extern "C" fn(&mut Object, Sel, *mut Object, *mut Object, *mut Object),
             );
             cls.add_method(
-                sel!(openInKakuWindowService:userData:error:),
-                open_in_kaku_window_service
+                sel!(openInStekloWindowService:userData:error:),
+                open_in_steklo_window_service
                     as extern "C" fn(&mut Object, Sel, *mut Object, *mut Object, *mut Object),
             );
         }

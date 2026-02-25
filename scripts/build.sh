@@ -9,7 +9,7 @@ fi
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
-APP_NAME="Kaku"
+APP_NAME="Steklo"
 TARGET_DIR="${TARGET_DIR:-target}"
 PROFILE="${PROFILE:-release}"
 OUT_DIR="${OUT_DIR:-dist}"
@@ -86,7 +86,7 @@ for arg in "$@"; do
 	esac
 done
 
-APP_BUNDLE_SRC="assets/macos/Kaku.app"
+APP_BUNDLE_SRC="assets/macos/Steklo.app"
 APP_BUNDLE_OUT="$OUT_DIR/$APP_NAME.app"
 
 echo "[1/7] Building binaries ($PROFILE, $BUILD_ARCH)..."
@@ -115,13 +115,13 @@ ensure_rust_targets "${BUILD_TARGETS[@]}"
 
 for target in "${BUILD_TARGETS[@]}"; do
 	echo "Building target: $target"
-	cargo build ${CARGO_PROFILE_ARGS[@]+"${CARGO_PROFILE_ARGS[@]}"} --target "$target" --target-dir "$TARGET_DIR" -p kaku-gui -p kaku
+	cargo build ${CARGO_PROFILE_ARGS[@]+"${CARGO_PROFILE_ARGS[@]}"} --target "$target" --target-dir "$TARGET_DIR" -p steklo-gui -p steklo
 done
 
 if [[ "$BUILD_ARCH" == "universal" ]]; then
 	BIN_DIR="$TARGET_DIR/universal/$PROFILE_DIR"
 	mkdir -p "$BIN_DIR"
-	for bin in kaku kaku-gui; do
+	for bin in steklo steklo-gui; do
 		lipo -create \
 			-output "$BIN_DIR/$bin" \
 			"$TARGET_DIR/aarch64-apple-darwin/$PROFILE_DIR/$bin" \
@@ -132,7 +132,7 @@ else
 	BIN_DIR="$TARGET_DIR/${BUILD_TARGETS[0]}/$PROFILE_DIR"
 fi
 
-for bin in kaku kaku-gui; do
+for bin in steklo steklo-gui; do
 	echo -n "Built $bin: "
 	lipo -info "$BIN_DIR/$bin"
 done
@@ -152,14 +152,14 @@ mkdir -p "$APP_BUNDLE_OUT/Contents/MacOS"
 mkdir -p "$APP_BUNDLE_OUT/Contents/Resources"
 
 echo "[2.5/7] Syncing version from Cargo.toml..."
-# Extract version from kaku/Cargo.toml (assuming it's the source of truth)
-VERSION=$(grep '^version =' kaku/Cargo.toml | head -n 1 | cut -d '"' -f2)
+# Extract version from steklo/Cargo.toml (assuming it's the source of truth)
+VERSION=$(grep '^version =' steklo/Cargo.toml | head -n 1 | cut -d '"' -f2)
 if [[ -n "$VERSION" ]]; then
 	echo "Stamping version $VERSION into Info.plist"
 	/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$APP_BUNDLE_OUT/Contents/Info.plist"
 	/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" "$APP_BUNDLE_OUT/Contents/Info.plist"
 else
-	echo "Warning: Could not detect version from kaku/Cargo.toml"
+	echo "Warning: Could not detect version from steklo/Cargo.toml"
 fi
 
 echo "[3/7] Downloading vendor plugins..."
@@ -186,9 +186,9 @@ if [[ -f "assets/logo.icns" ]]; then
 	cp "assets/logo.icns" "$APP_BUNDLE_OUT/Contents/Resources/terminal.icns"
 fi
 
-tic -xe kaku -o "$APP_BUNDLE_OUT/Contents/Resources/terminfo" termwiz/data/kaku.terminfo
+tic -xe steklo -o "$APP_BUNDLE_OUT/Contents/Resources/terminfo" termwiz/data/steklo.terminfo
 
-for bin in kaku kaku-gui; do
+for bin in steklo steklo-gui; do
 	cp "$BIN_DIR/$bin" "$APP_BUNDLE_OUT/Contents/MacOS/$bin"
 	chmod +x "$APP_BUNDLE_OUT/Contents/MacOS/$bin"
 done
@@ -199,23 +199,23 @@ xattr -cr "$APP_BUNDLE_OUT"
 echo "[5/7] Signing app bundle..."
 # Signing strategy:
 # - Dev builds (PROFILE=dev): Always use ad-hoc signing (-) for speed
-# - Release builds (PROFILE=release/release-opt): Use KAKU_SIGNING_IDENTITY if set, otherwise ad-hoc
+# - Release builds (PROFILE=release/release-opt): Use STEKLO_SIGNING_IDENTITY if set, otherwise ad-hoc
 # Usage with developer certificate:
-#   KAKU_SIGNING_IDENTITY="Apple Development: Your Name" ./scripts/build.sh
+#   STEKLO_SIGNING_IDENTITY="Apple Development: Your Name" ./scripts/build.sh
 if [[ "$PROFILE" == "dev" || "$PROFILE" == "debug" ]]; then
 	SIGNING_IDENTITY="-"
 	echo "Dev build: using ad-hoc signing"
 else
-	SIGNING_IDENTITY="${KAKU_SIGNING_IDENTITY:--}"
+	SIGNING_IDENTITY="${STEKLO_SIGNING_IDENTITY:--}"
 	if [[ "$SIGNING_IDENTITY" != "-" ]]; then
 		echo "Release build: signing with developer certificate"
 	else
-		echo "Release build: using ad-hoc signing (set KAKU_SIGNING_IDENTITY for developer certificate)"
+		echo "Release build: using ad-hoc signing (set STEKLO_SIGNING_IDENTITY for developer certificate)"
 	fi
 fi
 
 codesign --force --deep --options runtime \
-	--entitlements assets/macos/Kaku.entitlements \
+	--entitlements assets/macos/Steklo.entitlements \
 	--sign "$SIGNING_IDENTITY" "$APP_BUNDLE_OUT"
 
 touch "$APP_BUNDLE_OUT/Contents/Resources/terminal.icns"
@@ -228,7 +228,7 @@ if [[ "$APP_ONLY" == "1" ]]; then
 	exit 0
 fi
 
-UPDATE_ZIP_NAME="kaku_for_update.zip"
+UPDATE_ZIP_NAME="steklo_for_update.zip"
 UPDATE_ZIP_PATH="$OUT_DIR/$UPDATE_ZIP_NAME"
 UPDATE_SHA_PATH="$OUT_DIR/${UPDATE_ZIP_NAME}.sha256"
 

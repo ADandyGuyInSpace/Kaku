@@ -426,7 +426,7 @@ impl MenuItem {
     }
 }
 
-const WRAPPER_CLS_NAME: &str = "KakuNSMenuRepresentedItem";
+const WRAPPER_CLS_NAME: &str = "StekloNSMenuRepresentedItem";
 const WRAPPER_FIELD_NAME: &str = "item";
 /// Wraps RepresentedItem in an NSObject so that we can associate
 /// it with a MenuItem

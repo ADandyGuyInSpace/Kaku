@@ -510,7 +510,7 @@ fn config_dir_file(name: &str) -> PathBuf {
     config::CONFIG_DIRS
         .first()
         .cloned()
-        .unwrap_or_else(|| config::HOME_DIR.join(".config").join("kaku"))
+        .unwrap_or_else(|| config::HOME_DIR.join(".config").join("steklo"))
         .join(name)
 }
 
@@ -519,7 +519,7 @@ fn state_file() -> PathBuf {
 }
 
 fn legacy_window_geometry_file() -> PathBuf {
-    config_dir_file(".kaku_window_geometry")
+    config_dir_file(".steklo_window_geometry")
 }
 
 fn window_position(window: *mut Object) -> Option<ScreenPoint> {
@@ -2404,8 +2404,8 @@ impl Inner {
     }
 }
 
-const VIEW_CLS_NAME: &str = "KakuWindowView";
-const WINDOW_CLS_NAME: &str = "KakuWindow";
+const VIEW_CLS_NAME: &str = "StekloWindowView";
+const WINDOW_CLS_NAME: &str = "StekloWindow";
 const TITLEBAR_VIEW_NAME: &str = "NSTitlebarContainerView";
 
 #[derive(Debug, Clone, Copy)]
@@ -2685,7 +2685,7 @@ impl WindowView {
             let _: () = msg_send![
                 class!(NSObject),
                 cancelPreviousPerformRequestsWithTarget: view
-                selector: sel!(kakuPersistWindowStateAfterMove:)
+                selector: sel!(stekloPersistWindowStateAfterMove:)
                 object: nil
             ];
             let _: () = msg_send![
@@ -3087,15 +3087,15 @@ impl WindowView {
         NO
     }
 
-    extern "C" fn kaku_perform_key_assignment(
+    extern "C" fn steklo_perform_key_assignment(
         this: &mut Object,
         _sel: Sel,
         menu_item: *mut Object,
     ) {
         let menu_item = MenuItem::with_menu_item(menu_item);
-        // Safe because kakuPerformKeyAssignment: is only used with KeyAssignment
+        // Safe because stekloPerformKeyAssignment: is only used with KeyAssignment
         let action = menu_item.get_represented_item();
-        log::debug!("kaku_perform_key_assignment {action:?}",);
+        log::debug!("steklo_perform_key_assignment {action:?}",);
         match action {
             Some(RepresentedItem::KeyAssignment(action)) => {
                 if let Some(this) = Self::get_this(this) {
@@ -3139,12 +3139,12 @@ impl WindowView {
             let _: () = msg_send![
                 class!(NSObject),
                 cancelPreviousPerformRequestsWithTarget: this as *mut Object
-                selector: sel!(kakuPersistWindowStateAfterMove:)
+                selector: sel!(stekloPersistWindowStateAfterMove:)
                 object: nil
             ];
             let _: () = msg_send![
                 this,
-                performSelector: sel!(kakuPersistWindowStateAfterMove:)
+                performSelector: sel!(stekloPersistWindowStateAfterMove:)
                 withObject: nil
                 afterDelay: MOVE_PERSIST_DELAY_SECS
             ];
@@ -4346,8 +4346,8 @@ impl WindowView {
             );
 
             cls.add_method(
-                sel!(kakuPerformKeyAssignment:),
-                Self::kaku_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
+                sel!(stekloPerformKeyAssignment:),
+                Self::steklo_perform_key_assignment as extern "C" fn(&mut Object, Sel, *mut Object),
             );
 
             cls.add_method(
@@ -4457,7 +4457,7 @@ impl WindowView {
                 Self::did_change_screen as extern "C" fn(&mut Object, Sel, id),
             );
             cls.add_method(
-                sel!(kakuPersistWindowStateAfterMove:),
+                sel!(stekloPersistWindowStateAfterMove:),
                 Self::persist_window_state_after_move as extern "C" fn(&mut Object, Sel, id),
             );
 

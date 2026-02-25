@@ -1,14 +1,14 @@
 #!/bin/bash
-# Kaku First Run Experience
-# This script is launched automatically on the first run of Kaku.
+# Steklo First Run Experience
+# This script is launched automatically on the first run of Steklo.
 
 set -euo pipefail
 
 CURRENT_CONFIG_VERSION=11
-CONFIG_DIR="$HOME/.config/kaku"
+CONFIG_DIR="$HOME/.config/steklo"
 STATE_FILE="$CONFIG_DIR/state.json"
-LEGACY_VERSION_FILE="$CONFIG_DIR/.kaku_config_version"
-LEGACY_GEOMETRY_FILE="$CONFIG_DIR/.kaku_window_geometry"
+LEGACY_VERSION_FILE="$CONFIG_DIR/.steklo_config_version"
+LEGACY_GEOMETRY_FILE="$CONFIG_DIR/.steklo_window_geometry"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMMON_SCRIPT="$SCRIPT_DIR/state_common.sh"
 
@@ -26,10 +26,10 @@ trap persist_config_version EXIT
 # Resources directory resolution
 if [[ -f "$SCRIPT_DIR/setup_zsh.sh" ]]; then
 	RESOURCES_DIR="$SCRIPT_DIR"
-elif [[ -f "/Applications/Kaku.app/Contents/Resources/setup_zsh.sh" ]]; then
-	RESOURCES_DIR="/Applications/Kaku.app/Contents/Resources"
-elif [[ -f "$HOME/Applications/Kaku.app/Contents/Resources/setup_zsh.sh" ]]; then
-	RESOURCES_DIR="$HOME/Applications/Kaku.app/Contents/Resources"
+elif [[ -f "/Applications/Steklo.app/Contents/Resources/setup_zsh.sh" ]]; then
+	RESOURCES_DIR="/Applications/Steklo.app/Contents/Resources"
+elif [[ -f "$HOME/Applications/Steklo.app/Contents/Resources/setup_zsh.sh" ]]; then
+	RESOURCES_DIR="$HOME/Applications/Steklo.app/Contents/Resources"
 else
 	# Fallback for dev environment
 	RESOURCES_DIR="$SCRIPT_DIR"
@@ -43,17 +43,16 @@ clear
 
 # Display Welcome Message
 echo -e "\033[1;35m"
-echo "  _  __      _          "
-echo " | |/ /     | |         "
-echo " | ' / __ _ | | __ _   _ "
-echo " |  < / _\` || |/ /| | | |"
-echo " | . \ (_| ||   < | |_| |"
-echo " |_|\_\__,_||_|\_\ \__,_|"
+echo "  ____  _       _    _       "
+echo " / ___|| |_ ___| | _| | ___  "
+echo " \___ \| __/ _ \ |/ / |/ _ \ "
+echo "  ___) | ||  __/   <| | (_) |"
+echo " |____/ \__\___|_|\_\_|\___/ "
 echo -e "\033[0m"
-echo "Welcome to Kaku!"
+echo "Welcome to Steklo!"
 echo "A fast, out-of-the-box terminal built for AI coding."
 echo "--------------------------------------------------------"
-echo "Would you like to install Kaku's enhanced shell features?"
+echo "Would you like to install Steklo's enhanced shell features?"
 echo "This includes:"
 echo "  - z - Smart Directory Jumper"
 echo "  - zsh-completions - Rich Tab Completions"
@@ -62,9 +61,9 @@ echo "  - Zsh Autosuggestions"
 echo "  - Optional CLI tools via Homebrew: Starship, Delta, Lazygit, Yazi"
 echo ""
 echo "Shell config model:"
-echo "  - Kaku writes managed shell config to ~/.config/kaku/zsh/kaku.zsh"
+echo "  - Steklo writes managed shell config to ~/.config/steklo/zsh/steklo.zsh"
 echo "  - .zshrc only gets one source line"
-echo "  - You can roll back anytime with: kaku reset"
+echo "  - You can roll back anytime with: steklo reset"
 echo "--------------------------------------------------------"
 echo ""
 
@@ -77,13 +76,13 @@ if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
 	INSTALL_SHELL=true
 fi
 
-# Kaku Theme Prompt
+# Steklo Theme Prompt
 echo "--------------------------------------------------------"
-echo "Would you like to use the Kaku Theme?"
+echo "Would you like to use the Steklo Theme?"
 echo "A modern, high-contrast dark theme optimized for AI coding."
 echo "Perfect for Claude, Codex, and late-night hacking."
 echo "--------------------------------------------------------"
-read -p "Apply Kaku Theme? [Y/n] " -n 1 -r
+read -p "Apply Steklo Theme? [Y/n] " -n 1 -r
 echo ""
 
 INSTALL_THEME=false
@@ -94,7 +93,7 @@ fi
 # Process Shell Features
 if [[ "$INSTALL_SHELL" == "true" ]]; then
 	if [[ -f "$SETUP_SCRIPT" ]]; then
-		if ! KAKU_SKIP_TOOL_BOOTSTRAP=1 bash "$SETUP_SCRIPT"; then
+		if ! STEKLO_SKIP_TOOL_BOOTSTRAP=1 bash "$SETUP_SCRIPT"; then
 			echo ""
 			echo "Warning: shell setup failed. You can retry manually:"
 			echo "  bash \"$SETUP_SCRIPT\""
@@ -110,11 +109,11 @@ fi
 
 mkdir -p "$CONFIG_DIR"
 
-resolve_kaku_cli() {
+resolve_steklo_cli() {
 	local candidates=(
-		"$RESOURCES_DIR/../MacOS/kaku"
-		"/Applications/Kaku.app/Contents/MacOS/kaku"
-		"$HOME/Applications/Kaku.app/Contents/MacOS/kaku"
+		"$RESOURCES_DIR/../MacOS/steklo"
+		"/Applications/Steklo.app/Contents/MacOS/steklo"
+		"$HOME/Applications/Steklo.app/Contents/MacOS/steklo"
 	)
 
 	local candidate
@@ -125,8 +124,8 @@ resolve_kaku_cli() {
 		fi
 	done
 
-	if command -v kaku >/dev/null 2>&1; then
-		command -v kaku
+	if command -v steklo >/dev/null 2>&1; then
+		command -v steklo
 		return 0
 	fi
 
@@ -134,26 +133,26 @@ resolve_kaku_cli() {
 }
 
 ensure_user_config_via_cli() {
-	local kaku_lua_dest="$HOME/.config/kaku/kaku.lua"
-	if [[ -f "$kaku_lua_dest" ]]; then
-		echo "Keeping existing user config: $kaku_lua_dest"
+	local steklo_lua_dest="$HOME/.config/steklo/steklo.lua"
+	if [[ -f "$steklo_lua_dest" ]]; then
+		echo "Keeping existing user config: $steklo_lua_dest"
 		return 0
 	fi
 
-	local kaku_bin
-	if ! kaku_bin="$(resolve_kaku_cli)"; then
-		echo "Warning: kaku CLI not found, skipped config initialization."
+	local steklo_bin
+	if ! steklo_bin="$(resolve_steklo_cli)"; then
+		echo "Warning: steklo CLI not found, skipped config initialization."
 		return 0
 	fi
 
-	if "$kaku_bin" config --ensure-only >/dev/null 2>&1; then
-		echo "Created minimal user config: $kaku_lua_dest"
+	if "$steklo_bin" config --ensure-only >/dev/null 2>&1; then
+		echo "Created minimal user config: $steklo_lua_dest"
 	else
-		echo "Warning: failed to initialize user config via '$kaku_bin config --ensure-only'."
+		echo "Warning: failed to initialize user config via '$steklo_bin config --ensure-only'."
 	fi
 }
 
-# Process Kaku Theme
+# Process Steklo Theme
 if [[ "$INSTALL_THEME" == "true" ]]; then
 	ensure_user_config_via_cli
 fi
@@ -170,7 +169,7 @@ if [[ "$INSTALL_SHELL" == "true" ]]; then
 	fi
 fi
 
-echo -e "\n\033[1;32m🎃 Kaku environment is ready! Enjoy coding.\033[0m"
+echo -e "\n\033[1;32m🎃 Steklo environment is ready! Enjoy coding.\033[0m"
 
 # Persist explicitly here so successful first-run/upgrade paths are recorded.
 persist_config_version

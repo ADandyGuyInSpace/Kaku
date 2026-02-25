@@ -473,8 +473,8 @@ pub fn user_config_path() -> PathBuf {
     CONFIG_DIRS
         .first()
         .cloned()
-        .unwrap_or_else(|| HOME_DIR.join(".config").join("kaku"))
-        .join("kaku.lua")
+        .unwrap_or_else(|| HOME_DIR.join(".config").join("steklo"))
+        .join("steklo.lua")
 }
 
 pub fn ensure_user_config_exists() -> anyhow::Result<PathBuf> {
@@ -603,21 +603,21 @@ fn minimal_user_config_template() -> &'static str {
 
 local function resolve_bundled_config()
   local resource_dir = wezterm.executable_dir:gsub('MacOS/?$', 'Resources')
-  local bundled = resource_dir .. '/kaku.lua'
+  local bundled = resource_dir .. '/steklo.lua'
   local f = io.open(bundled, 'r')
   if f then
     f:close()
     return bundled
   end
 
-  local dev_bundled = wezterm.executable_dir .. '/../../assets/macos/Kaku.app/Contents/Resources/kaku.lua'
+  local dev_bundled = wezterm.executable_dir .. '/../../assets/macos/Steklo.app/Contents/Resources/steklo.lua'
   f = io.open(dev_bundled, 'r')
   if f then
     f:close()
     return dev_bundled
   end
 
-  local app_bundled = '/Applications/Kaku.app/Contents/Resources/kaku.lua'
+  local app_bundled = '/Applications/Steklo.app/Contents/Resources/steklo.lua'
   f = io.open(app_bundled, 'r')
   if f then
     f:close()
@@ -625,7 +625,7 @@ local function resolve_bundled_config()
   end
 
   local home = os.getenv('HOME') or ''
-  local home_bundled = home .. '/Applications/Kaku.app/Contents/Resources/kaku.lua'
+  local home_bundled = home .. '/Applications/Steklo.app/Contents/Resources/steklo.lua'
   f = io.open(home_bundled, 'r')
   if f then
     f:close()
@@ -643,14 +643,14 @@ if bundled then
   if ok and type(loaded) == 'table' then
     config = loaded
   else
-    wezterm.log_error('Kaku: failed to load bundled defaults from ' .. bundled)
+    wezterm.log_error('Steklo: failed to load bundled defaults from ' .. bundled)
   end
 else
-  wezterm.log_error('Kaku: bundled defaults not found')
+  wezterm.log_error('Steklo: bundled defaults not found')
 end
 
 -- User overrides:
--- Kaku intentionally keeps WezTerm-compatible Lua API names
+-- Steklo intentionally keeps WezTerm-compatible Lua API names
 -- for maximum compatibility, so `wezterm.*` here is expected.
 --
 -- 1) Font family and size
@@ -689,7 +689,7 @@ fn xdg_config_home_from(home_dir: &Path, xdg_config_home: Option<OsString>) -> P
         .filter(|value| !value.is_empty())
         .map(PathBuf::from)
         .unwrap_or_else(|| home_dir.join(".config"))
-        .join("kaku")
+        .join("steklo")
 }
 
 fn config_dirs_from(
@@ -705,7 +705,7 @@ fn config_dirs_from(
             std::env::split_paths(&d)
                 // `XDG_CONFIG_DIRS` may contain empty segments (e.g. `::`).
                 .filter(|path| !path.as_os_str().is_empty())
-                .map(|path| path.join("kaku")),
+                .map(|path| path.join("steklo")),
         );
     }
 
@@ -727,29 +727,29 @@ mod tests {
 
     #[test]
     fn empty_xdg_config_home_uses_default_home_config_dir() {
-        let home = PathBuf::from("/tmp/kaku-home");
+        let home = PathBuf::from("/tmp/steklo-home");
         let path = xdg_config_home_from(&home, Some(OsString::new()));
-        assert_eq!(path, home.join(".config").join("kaku"));
+        assert_eq!(path, home.join(".config").join("steklo"));
     }
 
     #[test]
     fn missing_xdg_config_home_uses_default_home_config_dir() {
-        let home = PathBuf::from("/tmp/kaku-home");
+        let home = PathBuf::from("/tmp/steklo-home");
         let path = xdg_config_home_from(&home, None);
-        assert_eq!(path, home.join(".config").join("kaku"));
+        assert_eq!(path, home.join(".config").join("steklo"));
     }
 
     #[test]
     fn valid_xdg_config_home_is_used() {
-        let home = PathBuf::from("/tmp/kaku-home");
+        let home = PathBuf::from("/tmp/steklo-home");
         let path = xdg_config_home_from(&home, Some(OsString::from("/custom/config")));
-        assert_eq!(path, PathBuf::from("/custom/config").join("kaku"));
+        assert_eq!(path, PathBuf::from("/custom/config").join("steklo"));
     }
 
     #[cfg(unix)]
     #[test]
     fn empty_xdg_config_dirs_entries_are_ignored() {
-        let home = PathBuf::from("/tmp/kaku-home");
+        let home = PathBuf::from("/tmp/steklo-home");
         let dirs = config_dirs_from(
             &home,
             Some(OsString::new()),
@@ -758,9 +758,9 @@ mod tests {
         assert_eq!(
             dirs,
             vec![
-                home.join(".config").join("kaku"),
-                PathBuf::from("/etc/xdg").join("kaku"),
-                PathBuf::from("/usr/local/etc/xdg").join("kaku"),
+                home.join(".config").join("steklo"),
+                PathBuf::from("/etc/xdg").join("steklo"),
+                PathBuf::from("/usr/local/etc/xdg").join("steklo"),
             ]
         );
     }
@@ -768,21 +768,21 @@ mod tests {
     #[cfg(unix)]
     #[test]
     fn missing_xdg_config_dirs_returns_primary_only() {
-        let home = PathBuf::from("/tmp/kaku-home");
+        let home = PathBuf::from("/tmp/steklo-home");
         let dirs = config_dirs_from(&home, Some(OsString::from("/custom/config")), None);
-        assert_eq!(dirs, vec![PathBuf::from("/custom/config").join("kaku")]);
+        assert_eq!(dirs, vec![PathBuf::from("/custom/config").join("steklo")]);
     }
 
     #[cfg(unix)]
     #[test]
     fn empty_xdg_config_dirs_returns_primary_only() {
-        let home = PathBuf::from("/tmp/kaku-home");
+        let home = PathBuf::from("/tmp/steklo-home");
         let dirs = config_dirs_from(
             &home,
             Some(OsString::from("/custom/config")),
             Some(OsString::new()),
         );
-        assert_eq!(dirs, vec![PathBuf::from("/custom/config").join("kaku")]);
+        assert_eq!(dirs, vec![PathBuf::from("/custom/config").join("steklo")]);
     }
 }
 
@@ -950,7 +950,7 @@ impl ConfigInner {
     }
 
     fn accumulate_watch_paths(lua: &Lua, watch_paths: &mut Vec<PathBuf>) {
-        if let Ok(mlua::Value::Table(tbl)) = lua.named_registry_value("kaku-watch-paths") {
+        if let Ok(mlua::Value::Table(tbl)) = lua.named_registry_value("steklo-watch-paths") {
             for path in tbl.sequence_values::<String>() {
                 if let Ok(path) = path {
                     watch_paths.push(PathBuf::from(path));

@@ -1,6 +1,6 @@
 #!/bin/bash
-# Kaku - OpenCode Theme Installation Script
-# Installs a Kaku-matching color theme for OpenCode
+# Steklo - OpenCode Theme Installation Script
+# Installs a Steklo-matching color theme for OpenCode
 
 set -euo pipefail
 
@@ -15,10 +15,10 @@ CONFIG_FILE="$OPENCODE_DIR/opencode.json"
 THEME_FILE="$THEMES_DIR/wezterm-match.json"
 
 echo -e "${BOLD}OpenCode Theme Setup${NC}"
-echo -e "${NC}Kaku-matching color palette for OpenCode${NC}"
+echo -e "${NC}Steklo-matching color palette for OpenCode${NC}"
 
 if [[ -f "$CONFIG_FILE" ]]; then
-    read -p "OpenCode config already exists. Overwrite with Kaku theme? [Y/n] " -n 1 -r
+    read -p "OpenCode config already exists. Overwrite with Steklo theme? [Y/n] " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Nn]$ ]]; then
         echo -e "${YELLOW}Skipped${NC}"

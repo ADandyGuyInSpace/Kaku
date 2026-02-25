@@ -1028,7 +1028,7 @@ impl Config {
 
         let mut paths = vec![];
         for dir in CONFIG_DIRS.iter() {
-            paths.push(PathPossibility::optional(dir.join("kaku.lua")))
+            paths.push(PathPossibility::optional(dir.join("steklo.lua")))
         }
 
         if cfg!(windows) {
@@ -1042,7 +1042,7 @@ impl Config {
             // dir as the executable that will take precedence.
             if let Ok(exe_name) = std::env::current_exe() {
                 if let Some(exe_dir) = exe_name.parent() {
-                    paths.insert(0, PathPossibility::optional(exe_dir.join("kaku.lua")));
+                    paths.insert(0, PathPossibility::optional(exe_dir.join("steklo.lua")));
                 }
             }
         }
@@ -1051,7 +1051,7 @@ impl Config {
             if let Ok(exe_name) = std::env::current_exe() {
                 if let Some(contents_dir) = exe_name.parent().and_then(|p| p.parent()) {
                     paths.push(PathPossibility::optional(
-                        contents_dir.join("Resources").join("kaku.lua"),
+                        contents_dir.join("Resources").join("steklo.lua"),
                     ));
                 }
             }
@@ -1081,11 +1081,11 @@ impl Config {
             }
         }
 
-        // We didn't find (or were asked to skip) a kaku.lua file, so
+        // We didn't find (or were asked to skip) a steklo.lua file, so
         // update the environment to make it simpler to understand this
         // state.
-        std::env::remove_var("KAKU_CONFIG_FILE");
-        std::env::remove_var("KAKU_CONFIG_DIR");
+        std::env::remove_var("STEKLO_CONFIG_FILE");
+        std::env::remove_var("STEKLO_CONFIG_DIR");
 
         match Self::try_default() {
             Err(err) => LoadedConfig {
@@ -1182,7 +1182,7 @@ impl Config {
                         anyhow::anyhow!(
                             "Config error: You may have forgotten to define the config variable.\n\
                              \n\
-                             In kaku.lua, you need to create the config table first:\n\
+                             In steklo.lua, you need to create the config table first:\n\
                              \n\
                              local wezterm = require 'wezterm'\n\
                              local config = {{}}  -- or wezterm.config_builder()\n\
@@ -1241,9 +1241,9 @@ impl Config {
                 })?;
                 cfg.check_consistency()?;
 
-                std::env::set_var("KAKU_CONFIG_FILE", p);
+                std::env::set_var("STEKLO_CONFIG_FILE", p);
                 if let Some(dir) = p.parent() {
-                    std::env::set_var("KAKU_CONFIG_DIR", dir);
+                    std::env::set_var("STEKLO_CONFIG_DIR", dir);
                 }
                 Ok(cfg)
             });
@@ -1753,7 +1753,7 @@ impl Config {
         #[cfg(unix)]
         cmd.umask(umask::UmaskSaver::saved_umask());
         cmd.env("TERM", &self.term);
-        if self.term == "kaku" {
+        if self.term == "steklo" {
             if let Some(terminfo_dir) = bundled_terminfo_dir() {
                 if let Some(terminfo_dirs) =
                     merged_terminfo_dirs(std::env::var_os("TERMINFO_DIRS"), &terminfo_dir)
@@ -1765,7 +1765,7 @@ impl Config {
         cmd.env("COLORTERM", "truecolor");
         // TERM_PROGRAM and TERM_PROGRAM_VERSION are an emerging
         // de-facto standard for identifying the terminal.
-        cmd.env("TERM_PROGRAM", "Kaku");
+        cmd.env("TERM_PROGRAM", "Steklo");
         cmd.env("TERM_PROGRAM_VERSION", crate::wezterm_version());
     }
 }
@@ -1901,7 +1901,7 @@ fn default_harfbuzz_features() -> Vec<String> {
 
 fn default_term() -> String {
     if bundled_terminfo_dir().is_some() {
-        "kaku".into()
+        "steklo".into()
     } else {
         "xterm-256color".into()
     }
@@ -1942,26 +1942,26 @@ fn default_font_size() -> f64 {
 
 pub(crate) fn compute_cache_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::cache_dir() {
-        return Ok(runtime.join("kaku"));
+        return Ok(runtime.join("steklo"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/kaku"))
+    Ok(crate::HOME_DIR.join(".local/share/steklo"))
 }
 
 pub(crate) fn compute_data_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::data_dir() {
-        return Ok(runtime.join("kaku"));
+        return Ok(runtime.join("steklo"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/kaku"))
+    Ok(crate::HOME_DIR.join(".local/share/steklo"))
 }
 
 pub(crate) fn compute_runtime_dir() -> anyhow::Result<PathBuf> {
     if let Some(runtime) = dirs_next::runtime_dir() {
-        return Ok(runtime.join("kaku"));
+        return Ok(runtime.join("steklo"));
     }
 
-    Ok(crate::HOME_DIR.join(".local/share/kaku"))
+    Ok(crate::HOME_DIR.join(".local/share/steklo"))
 }
 
 pub fn pki_dir() -> anyhow::Result<PathBuf> {

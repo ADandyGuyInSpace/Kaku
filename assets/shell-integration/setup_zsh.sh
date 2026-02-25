@@ -1,6 +1,6 @@
 #!/bin/bash
-# Kaku Zsh Setup Script
-# This script configures a "batteries-included" Zsh environment using Kaku's bundled resources.
+# Steklo Zsh Setup Script
+# This script configures a "batteries-included" Zsh environment using Steklo's bundled resources.
 # It is designed to be safe: it backs up existing configurations and can be re-run.
 
 set -euo pipefail
@@ -25,17 +25,17 @@ NC='\033[0m'
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Thin entrypoint: delegate to `kaku init` whenever possible.
+# Thin entrypoint: delegate to `steklo init` whenever possible.
 # The rust command owns wrapper installation and orchestration.
-if [[ "${KAKU_INIT_INTERNAL:-0}" != "1" ]]; then
-	if [[ -n "${KAKU_BIN:-}" && -x "${KAKU_BIN}" ]]; then
-		exec "${KAKU_BIN}" init "$@"
+if [[ "${STEKLO_INIT_INTERNAL:-0}" != "1" ]]; then
+	if [[ -n "${STEKLO_BIN:-}" && -x "${STEKLO_BIN}" ]]; then
+		exec "${STEKLO_BIN}" init "$@"
 	fi
 
 	for candidate in \
-		"$SCRIPT_DIR/../MacOS/kaku" \
-		"/Applications/Kaku.app/Contents/MacOS/kaku" \
-		"$HOME/Applications/Kaku.app/Contents/MacOS/kaku"; do
+		"$SCRIPT_DIR/../MacOS/steklo" \
+		"/Applications/Steklo.app/Contents/MacOS/steklo" \
+		"$HOME/Applications/Steklo.app/Contents/MacOS/steklo"; do
 		if [[ -x "$candidate" ]]; then
 			exec "$candidate" init "$@"
 		fi
@@ -49,12 +49,12 @@ if [[ -d "$SCRIPT_DIR/vendor" ]]; then
 	RESOURCES_DIR="$SCRIPT_DIR"
 elif [[ -d "$SCRIPT_DIR/../vendor" ]]; then
 	RESOURCES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-elif [[ -d "/Applications/Kaku.app/Contents/Resources/vendor" ]]; then
-	RESOURCES_DIR="/Applications/Kaku.app/Contents/Resources"
-elif [[ -d "$HOME/Applications/Kaku.app/Contents/Resources/vendor" ]]; then
-	RESOURCES_DIR="$HOME/Applications/Kaku.app/Contents/Resources"
+elif [[ -d "/Applications/Steklo.app/Contents/Resources/vendor" ]]; then
+	RESOURCES_DIR="/Applications/Steklo.app/Contents/Resources"
+elif [[ -d "$HOME/Applications/Steklo.app/Contents/Resources/vendor" ]]; then
+	RESOURCES_DIR="$HOME/Applications/Steklo.app/Contents/Resources"
 else
-	echo -e "${YELLOW}Error: Could not locate Kaku resources (vendor directory missing).${NC}"
+	echo -e "${YELLOW}Error: Could not locate Steklo resources (vendor directory missing).${NC}"
 	exit 1
 fi
 
@@ -63,14 +63,14 @@ TOOL_INSTALL_SCRIPT="$SCRIPT_DIR/install_cli_tools.sh"
 if [[ ! -f "$TOOL_INSTALL_SCRIPT" ]]; then
 	TOOL_INSTALL_SCRIPT="$RESOURCES_DIR/install_cli_tools.sh"
 fi
-USER_CONFIG_DIR="$HOME/.config/kaku/zsh"
-KAKU_INIT_FILE="$USER_CONFIG_DIR/kaku.zsh"
+USER_CONFIG_DIR="$HOME/.config/steklo/zsh"
+STEKLO_INIT_FILE="$USER_CONFIG_DIR/steklo.zsh"
 STARSHIP_CONFIG="$HOME/.config/starship.toml"
 YAZI_CONFIG_DIR="$HOME/.config/yazi"
 YAZI_CONFIG_FILE="$YAZI_CONFIG_DIR/yazi.toml"
 YAZI_THEME_FILE="$YAZI_CONFIG_DIR/theme.toml"
 ZSHRC="${ZDOTDIR:-$HOME}/.zshrc"
-BACKUP_SUFFIX=".kaku-backup-$(date +%s)"
+BACKUP_SUFFIX=".steklo-backup-$(date +%s)"
 ZSHRC_BACKED_UP=0
 
 backup_zshrc_once() {
@@ -86,7 +86,7 @@ if [[ ! -d "$VENDOR_DIR" ]]; then
 	exit 1
 fi
 
-echo -e "${BOLD}Setting up Kaku Shell Environment${NC}"
+echo -e "${BOLD}Setting up Steklo Shell Environment${NC}"
 
 # 1. Prepare User Config Directory
 mkdir -p "$USER_CONFIG_DIR"
@@ -94,7 +94,7 @@ mkdir -p "$USER_CONFIG_DIR/plugins"
 mkdir -p "$USER_CONFIG_DIR/bin"
 
 # 2. Optional external tools bootstrap (Homebrew-managed)
-if [[ "${KAKU_SKIP_TOOL_BOOTSTRAP:-0}" != "1" ]]; then
+if [[ "${STEKLO_SKIP_TOOL_BOOTSTRAP:-0}" != "1" ]]; then
 	if [[ -f "$TOOL_INSTALL_SCRIPT" ]]; then
 		if ! bash "$TOOL_INSTALL_SCRIPT"; then
 			echo -e "${YELLOW}Warning: optional CLI tool bootstrap failed.${NC}"
@@ -119,7 +119,7 @@ cp -R "$VENDOR_DIR/zsh-z" "$USER_CONFIG_DIR/plugins/"
 cp -R "$VENDOR_DIR/zsh-autosuggestions" "$USER_CONFIG_DIR/plugins/"
 cp -R "$VENDOR_DIR/zsh-syntax-highlighting" "$USER_CONFIG_DIR/plugins/"
 cp -R "$VENDOR_DIR/zsh-completions" "$USER_CONFIG_DIR/plugins/"
-echo -e "  ${GREEN}✓${NC} ${BOLD}Tools${NC}       Installed Zsh plugins ${NC}(~/.config/kaku/zsh/plugins)${NC}"
+echo -e "  ${GREEN}✓${NC} ${BOLD}Tools${NC}       Installed Zsh plugins ${NC}(~/.config/steklo/zsh/plugins)${NC}"
 
 # Copy Starship Config (if not exists)
 STARSHIP_CONFIG_CREATED=false
@@ -179,15 +179,15 @@ EOF
 	echo -e "  ${GREEN}✓${NC} ${BOLD}Config${NC}      Initialized yazi theme ${NC}(~/.config/yazi/theme.toml)${NC}"
 fi
 
-# 3. Create/Update Kaku Init File (managed by Kaku)
-cat <<EOF >"$KAKU_INIT_FILE"
-# Kaku Zsh Integration - DO NOT EDIT MANUALLY
-# This file is managed by Kaku.app. Any changes may be overwritten.
+# 3. Create/Update Steklo Init File (managed by Steklo)
+cat <<EOF >"$STEKLO_INIT_FILE"
+# Steklo Zsh Integration - DO NOT EDIT MANUALLY
+# This file is managed by Steklo.app. Any changes may be overwritten.
 
-export KAKU_ZSH_DIR="\$HOME/.config/kaku/zsh"
+export STEKLO_ZSH_DIR="\$HOME/.config/steklo/zsh"
 
-# Add Kaku managed bin to PATH (kaku wrapper and user tools)
-export PATH="\$KAKU_ZSH_DIR/bin:\$PATH"
+# Add Steklo managed bin to PATH (steklo wrapper and user tools)
+export PATH="\$STEKLO_ZSH_DIR/bin:\$PATH"
 
 # Initialize Starship (Cross-shell prompt)
 # Use system installation managed by Homebrew (or user PATH).
@@ -219,51 +219,51 @@ setopt interactive_comments
 bindkey -e
 
 # Prefix history search on Up/Down (e.g. type "curl" then press Up)
-# This is shell behavior, not terminal behavior, so Kaku configures it here.
+# This is shell behavior, not terminal behavior, so Steklo configures it here.
 autoload -U up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 zmodload zsh/terminfo 2>/dev/null || true
-for _kaku_keymap in emacs viins; do
-    [[ -n "\${terminfo[kcuu1]:-}" ]] && bindkey -M "\$_kaku_keymap" "\${terminfo[kcuu1]}" up-line-or-beginning-search
-    [[ -n "\${terminfo[kcud1]:-}" ]] && bindkey -M "\$_kaku_keymap" "\${terminfo[kcud1]}" down-line-or-beginning-search
-    bindkey -M "\$_kaku_keymap" '^[[A' up-line-or-beginning-search
-    bindkey -M "\$_kaku_keymap" '^[[B' down-line-or-beginning-search
-    bindkey -M "\$_kaku_keymap" '^[OA' up-line-or-beginning-search
-    bindkey -M "\$_kaku_keymap" '^[OB' down-line-or-beginning-search
+for _steklo_keymap in emacs viins; do
+    [[ -n "\${terminfo[kcuu1]:-}" ]] && bindkey -M "\$_steklo_keymap" "\${terminfo[kcuu1]}" up-line-or-beginning-search
+    [[ -n "\${terminfo[kcud1]:-}" ]] && bindkey -M "\$_steklo_keymap" "\${terminfo[kcud1]}" down-line-or-beginning-search
+    bindkey -M "\$_steklo_keymap" '^[[A' up-line-or-beginning-search
+    bindkey -M "\$_steklo_keymap" '^[[B' down-line-or-beginning-search
+    bindkey -M "\$_steklo_keymap" '^[OA' up-line-or-beginning-search
+    bindkey -M "\$_steklo_keymap" '^[OB' down-line-or-beginning-search
 done
-unset _kaku_keymap
+unset _steklo_keymap
 
-# Kaku line-selection widgets for modified arrows in prompt editing.
-_kaku_select_left_char() {
+# Steklo line-selection widgets for modified arrows in prompt editing.
+_steklo_select_left_char() {
     emulate -L zsh
     if (( ! REGION_ACTIVE )); then
         zle set-mark-command
     fi
     zle backward-char
 }
-_kaku_select_right_char() {
+_steklo_select_right_char() {
     emulate -L zsh
     if (( ! REGION_ACTIVE )); then
         zle set-mark-command
     fi
     zle forward-char
 }
-_kaku_select_line_start() {
+_steklo_select_line_start() {
     emulate -L zsh
     if (( ! REGION_ACTIVE )); then
         zle set-mark-command
     fi
     zle beginning-of-line
 }
-_kaku_select_line_end() {
+_steklo_select_line_end() {
     emulate -L zsh
     if (( ! REGION_ACTIVE )); then
         zle set-mark-command
     fi
     zle end-of-line
 }
-_kaku_has_active_region() {
+_steklo_has_active_region() {
     emulate -L zsh
     # Require both an active region flag and a non-empty span. Either one can
     # be stale on its own and would cause false-positive kill-region deletes.
@@ -272,9 +272,9 @@ _kaku_has_active_region() {
     fi
     return 1
 }
-_kaku_deactivate_region() {
+_steklo_deactivate_region() {
     emulate -L zsh
-    if ! _kaku_has_active_region; then
+    if ! _steklo_has_active_region; then
         return 1
     fi
     if (( \${+widgets[deactivate-region]} )); then
@@ -287,10 +287,10 @@ _kaku_deactivate_region() {
     return 0
 }
 # Unconditional region deactivation helper (not bound to any key; called from
-# _kaku_mv_* widgets below). Unlike _kaku_deactivate_region this always clears
+# _steklo_mv_* widgets below). Unlike _steklo_deactivate_region this always clears
 # REGION_ACTIVE without checking MARK vs CURSOR, ensuring stale region flags
 # are removed even when the selection span is empty.
-_kaku_force_deactivate_region() {
+_steklo_force_deactivate_region() {
     emulate -L zsh
     (( ! REGION_ACTIVE )) && return
     if (( \${+widgets[deactivate-region]} )); then
@@ -302,40 +302,40 @@ _kaku_force_deactivate_region() {
     fi
 }
 # Movement widgets that auto-deactivate any active region before moving.
-# The Kaku GUI sends ^B/^F/^A/^E when collapsing a selection with a plain or
+# The Steklo GUI sends ^B/^F/^A/^E when collapsing a selection with a plain or
 # Cmd+arrow key; these wrappers ensure zsh clears REGION_ACTIVE in the same
 # keystroke, preventing spurious region-extension or stale region highlights.
-_kaku_mv_backward_char() {
+_steklo_mv_backward_char() {
     emulate -L zsh
-    _kaku_force_deactivate_region
+    _steklo_force_deactivate_region
     zle backward-char
 }
-_kaku_mv_forward_char() {
+_steklo_mv_forward_char() {
     emulate -L zsh
-    _kaku_force_deactivate_region
+    _steklo_force_deactivate_region
     zle forward-char
 }
-_kaku_mv_beginning_of_line() {
+_steklo_mv_beginning_of_line() {
     emulate -L zsh
-    _kaku_force_deactivate_region
+    _steklo_force_deactivate_region
     zle beginning-of-line
 }
-_kaku_mv_end_of_line() {
+_steklo_mv_end_of_line() {
     emulate -L zsh
-    _kaku_force_deactivate_region
+    _steklo_force_deactivate_region
     zle end-of-line
 }
-zle -N _kaku_mv_backward_char
-zle -N _kaku_mv_forward_char
-zle -N _kaku_mv_beginning_of_line
-zle -N _kaku_mv_end_of_line
-zle -N _kaku_select_left_char
-zle -N _kaku_select_right_char
-zle -N _kaku_select_line_start
-zle -N _kaku_select_line_end
+zle -N _steklo_mv_backward_char
+zle -N _steklo_mv_forward_char
+zle -N _steklo_mv_beginning_of_line
+zle -N _steklo_mv_end_of_line
+zle -N _steklo_select_left_char
+zle -N _steklo_select_right_char
+zle -N _steklo_select_line_start
+zle -N _steklo_select_line_end
 
-# Terminal-assisted selection shortcuts (Kaku GUI sends these directly).
-_kaku_cmd_a_select_all() {
+# Terminal-assisted selection shortcuts (Steklo GUI sends these directly).
+_steklo_cmd_a_select_all() {
     emulate -L zsh
     # Move to beginning first so MARK is anchored there, then extend to end.
     # If set-mark-command were called first, MARK would be at the current cursor
@@ -344,70 +344,70 @@ _kaku_cmd_a_select_all() {
     zle set-mark-command
     zle end-of-line
 }
-_kaku_cmd_shift_left() {
+_steklo_cmd_shift_left() {
     emulate -L zsh
     zle set-mark-command
     zle beginning-of-line
 }
-_kaku_cmd_shift_right() {
+_steklo_cmd_shift_right() {
     emulate -L zsh
     zle set-mark-command
     zle end-of-line
 }
-zle -N _kaku_cmd_a_select_all
-zle -N _kaku_cmd_shift_left
-zle -N _kaku_cmd_shift_right
+zle -N _steklo_cmd_a_select_all
+zle -N _steklo_cmd_shift_left
+zle -N _steklo_cmd_shift_right
 
-# Cancel selection without moving cursor (ESC key in Kaku GUI).
-_kaku_cancel_selection() {
+# Cancel selection without moving cursor (ESC key in Steklo GUI).
+_steklo_cancel_selection() {
     emulate -L zsh
-    _kaku_force_deactivate_region
+    _steklo_force_deactivate_region
 }
-zle -N _kaku_cancel_selection
+zle -N _steklo_cancel_selection
 
 # Shift+Left/Right: char expand; Shift+Home/End: to line boundary.
-bindkey '^[[1;2D' _kaku_select_left_char
-bindkey '^[[1;2C' _kaku_select_right_char
-bindkey '^[[1;2H' _kaku_select_line_start
-bindkey '^[[1;2F' _kaku_select_line_end
+bindkey '^[[1;2D' _steklo_select_left_char
+bindkey '^[[1;2C' _steklo_select_right_char
+bindkey '^[[1;2H' _steklo_select_line_start
+bindkey '^[[1;2F' _steklo_select_line_end
 
-# Terminal-assisted selection shortcuts (distinct CSI sequences from Kaku GUI).
-bindkey '^[[990~' _kaku_cmd_a_select_all
-bindkey '^[[991~' _kaku_cmd_shift_left
-bindkey '^[[992~' _kaku_cmd_shift_right
-bindkey '^[[995~' _kaku_cancel_selection
+# Terminal-assisted selection shortcuts (distinct CSI sequences from Steklo GUI).
+bindkey '^[[990~' _steklo_cmd_a_select_all
+bindkey '^[[991~' _steklo_cmd_shift_left
+bindkey '^[[992~' _steklo_cmd_shift_right
+bindkey '^[[995~' _steklo_cancel_selection
 
 # Emacs movement keys wrapped to auto-deactivate any active region.
-# ^B/^F/^A/^E are sent by the Kaku GUI when collapsing a selection with a
+# ^B/^F/^A/^E are sent by the Steklo GUI when collapsing a selection with a
 # plain or Cmd+arrow key. Wrapping them (rather than using a custom CSI escape)
 # avoids stray characters if the sequence is received in an unexpected context.
-bindkey '^B' _kaku_mv_backward_char
-bindkey '^F' _kaku_mv_forward_char
-bindkey '^A' _kaku_mv_beginning_of_line
-bindkey '^E' _kaku_mv_end_of_line
+bindkey '^B' _steklo_mv_backward_char
+bindkey '^F' _steklo_mv_forward_char
+bindkey '^A' _steklo_mv_beginning_of_line
+bindkey '^E' _steklo_mv_end_of_line
 
 # Wrap delete widgets to auto-clear active region first, preventing accidental
 # multi-character deletes when the shell mark is stale from prior prompt selections.
-_kaku_backward_delete_char() {
+_steklo_backward_delete_char() {
     emulate -L zsh
-    if _kaku_has_active_region; then
-        _kaku_deactivate_region 2>/dev/null || true
+    if _steklo_has_active_region; then
+        _steklo_deactivate_region 2>/dev/null || true
     fi
     zle backward-delete-char
 }
-_kaku_delete_char() {
+_steklo_delete_char() {
     emulate -L zsh
-    if _kaku_has_active_region; then
-        _kaku_deactivate_region 2>/dev/null || true
+    if _steklo_has_active_region; then
+        _steklo_deactivate_region 2>/dev/null || true
     fi
     zle delete-char
 }
 
-zle -N _kaku_backward_delete_char
-zle -N _kaku_delete_char
-bindkey '^?' _kaku_backward_delete_char
-bindkey '^H' _kaku_backward_delete_char
-bindkey '^[[3~' _kaku_delete_char
+zle -N _steklo_backward_delete_char
+zle -N _steklo_delete_char
+bindkey '^?' _steklo_backward_delete_char
+bindkey '^H' _steklo_backward_delete_char
+bindkey '^[[3~' _steklo_delete_char
 bindkey '^G' send-break
 
 # Directory Navigation Options
@@ -467,7 +467,7 @@ y() {
     fi
 
     local tmp_file=""
-    tmp_file="\$(mktemp -t kaku-yazi-cwd.XXXXXX 2>/dev/null)" || {
+    tmp_file="\$(mktemp -t steklo-yazi-cwd.XXXXXX 2>/dev/null)" || {
         echo "Failed to create a temp file for yazi cwd sync"
         return 1
     }
@@ -496,8 +496,8 @@ yy() {
 # Load Plugins (Performance Optimized)
 
 # Load zsh-completions into fpath before compinit
-if [[ -d "\$KAKU_ZSH_DIR/plugins/zsh-completions/src" ]]; then
-    fpath=("\$KAKU_ZSH_DIR/plugins/zsh-completions/src" \$fpath)
+if [[ -d "\$STEKLO_ZSH_DIR/plugins/zsh-completions/src" ]]; then
+    fpath=("\$STEKLO_ZSH_DIR/plugins/zsh-completions/src" \$fpath)
 fi
 
 # Optimized compinit: Use cache and only rebuild when needed (~30ms saved)
@@ -511,19 +511,19 @@ else
 fi
 
 # Load zsh-z (smart directory jumping) - Fast, no delay needed
-if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh" ]]; then
-    # Default to smart case matching so z kaku prefers Kaku over lowercase
+if [[ -f "\$STEKLO_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh" ]]; then
+    # Default to smart case matching so z steklo prefers Steklo over lowercase
     # path entries. Users can still override this in their own shell config.
     : "\${ZSHZ_CASE:=smart}"
     export ZSHZ_CASE
-    source "\$KAKU_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh"
+    source "\$STEKLO_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh"
 
     # z supports fuzzy directory jumps, but users also expect cd + Tab to
     # reuse visited paths in a layered way. Keep default _cd behavior and
     # only fall back to zsh-z history when filesystem completion has no match.
     # Delegate ranking/matching to zshz --complete so behavior stays aligned
     # with the plugin (frecency ordering, smart-case, future plugin changes).
-    _kaku_cd_history_complete() {
+    _steklo_cd_history_complete() {
         emulate -L zsh
         setopt extended_glob no_sh_word_split
 
@@ -553,18 +553,18 @@ if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-z/zsh-z.plugin.zsh" ]]; then
         compadd -Q -U -X "zsh-z history dirs" -- "\${matches[@]}"
         return 0
     }
-    compdef _kaku_cd_history_complete cd
+    compdef _steklo_cd_history_complete cd
 fi
 
 # Load zsh-autosuggestions - Async, minimal impact
-if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source "\$KAKU_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [[ -f "\$STEKLO_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source "\$STEKLO_ZSH_DIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # Smart Tab behavior:
 # - Use completion while typing arguments/path-like tokens
 # - Accept inline suggestion first only for the first command token
-_kaku_tab_widget() {
+_steklo_tab_widget() {
     emulate -L zsh
 
     local has_suggestion=0
@@ -589,18 +589,18 @@ _kaku_tab_widget() {
         zle expand-or-complete
     fi
 }
-zle -N _kaku_tab_widget
-bindkey '^I' _kaku_tab_widget
+zle -N _steklo_tab_widget
+bindkey '^I' _steklo_tab_widget
 
 # Defer zsh-syntax-highlighting to first prompt (~40ms saved at startup)
 # This plugin must be loaded LAST, and we delay it for faster shell startup
-if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+if [[ -f "\$STEKLO_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
     # Simplified highlighters for better performance (removed brackets, pattern, cursor)
     export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
     # Defer loading until first prompt display
     zsh_syntax_highlighting_defer() {
-        source "\$KAKU_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        source "\$STEKLO_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
         # Remove this hook after first run
         precmd_functions=("\${precmd_functions[@]:#zsh_syntax_highlighting_defer}")
@@ -610,15 +610,15 @@ if [[ -f "\$KAKU_ZSH_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting
     precmd_functions+=(zsh_syntax_highlighting_defer)
 fi
 
-# Kaku AI fix hooks (error-only):
+# Steklo AI fix hooks (error-only):
 # - preexec captures the command text
 # - precmd captures the previous command exit code
 # Lua listens to these user vars and only suggests fixes when exit code != 0.
-_kaku_set_user_var() {
+_steklo_set_user_var() {
     local name="\$1"
     local value="\$2"
 
-    if [[ "\$TERM" != "kaku" ]]; then
+    if [[ "\$TERM" != "steklo" ]]; then
         return
     fi
 
@@ -642,49 +642,49 @@ _kaku_set_user_var() {
 
 # Only emit exit code when a real command was executed.
 # Empty Enter should not re-trigger AI suggestions for the previous failure.
-typeset -g _kaku_ai_cmd_pending=0
+typeset -g _steklo_ai_cmd_pending=0
 
-_kaku_ai_preexec() {
-    if [[ -n "\${KAKU_AUTO_DISABLE:-}" ]]; then
+_steklo_ai_preexec() {
+    if [[ -n "\${STEKLO_AUTO_DISABLE:-}" ]]; then
         return
     fi
-    _kaku_ai_cmd_pending=1
-    _kaku_set_user_var "kaku_last_cmd" "\$1"
+    _steklo_ai_cmd_pending=1
+    _steklo_set_user_var "steklo_last_cmd" "\$1"
 }
 
-_kaku_ai_precmd() {
+_steklo_ai_precmd() {
     local last_exit_code="\$?"
-    if [[ -n "\${KAKU_AUTO_DISABLE:-}" ]]; then
-        _kaku_ai_cmd_pending=0
+    if [[ -n "\${STEKLO_AUTO_DISABLE:-}" ]]; then
+        _steklo_ai_cmd_pending=0
         return 0
     fi
-    if [[ "\${_kaku_ai_cmd_pending:-0}" != "1" ]]; then
+    if [[ "\${_steklo_ai_cmd_pending:-0}" != "1" ]]; then
         return 0
     fi
-    _kaku_set_user_var "kaku_last_exit_code" "\$last_exit_code"
-    _kaku_ai_cmd_pending=0
+    _steklo_set_user_var "steklo_last_exit_code" "\$last_exit_code"
+    _steklo_ai_cmd_pending=0
     return 0
 }
 
-if [[ \${preexec_functions[(Ie)_kaku_ai_preexec]} -eq 0 ]]; then
-    preexec_functions+=(_kaku_ai_preexec)
+if [[ \${preexec_functions[(Ie)_steklo_ai_preexec]} -eq 0 ]]; then
+    preexec_functions+=(_steklo_ai_preexec)
 fi
-if [[ \${precmd_functions[(Ie)_kaku_ai_precmd]} -eq 0 ]]; then
-    precmd_functions=(_kaku_ai_precmd "\${precmd_functions[@]}")
+if [[ \${precmd_functions[(Ie)_steklo_ai_precmd]} -eq 0 ]]; then
+    precmd_functions=(_steklo_ai_precmd "\${precmd_functions[@]}")
 fi
 
-# Auto-set TERM to xterm-256color for SSH connections when running under kaku,
-# since remote hosts typically lack the kaku terminfo entry.
+# Auto-set TERM to xterm-256color for SSH connections when running under steklo,
+# since remote hosts typically lack the steklo terminfo entry.
 # Also auto-detect 1Password SSH agent and add IdentitiesOnly=yes to prevent
 # "Too many authentication failures" caused by 1Password offering all stored keys.
-# Set KAKU_SSH_SKIP_1PASSWORD_FIX=1 to disable the 1Password behavior.
+# Set STEKLO_SSH_SKIP_1PASSWORD_FIX=1 to disable the 1Password behavior.
 ssh() {
     local -a extra_opts=()
 
     # 1Password SSH agent fix: auto-add IdentitiesOnly=yes to prevent
     # "Too many authentication failures" when 1Password offers all stored keys.
-    # Set KAKU_SSH_SKIP_1PASSWORD_FIX=1 to disable.
-    if [[ -z "\${KAKU_SSH_SKIP_1PASSWORD_FIX-}" ]]; then
+    # Set STEKLO_SSH_SKIP_1PASSWORD_FIX=1 to disable.
+    if [[ -z "\${STEKLO_SSH_SKIP_1PASSWORD_FIX-}" ]]; then
         local sock="\${SSH_AUTH_SOCK:-}"
         if [[ "\$sock" == *1password* || "\$sock" == *2BUA8C4S2C* ]]; then
             local has_identitiesonly=false prev=""
@@ -697,19 +697,19 @@ ssh() {
         fi
     fi
 
-    if [[ "\$TERM" == "kaku" ]]; then
+    if [[ "\$TERM" == "steklo" ]]; then
         TERM=xterm-256color command ssh "\${extra_opts[@]}" "\$@"
     else
         command ssh "\${extra_opts[@]}" "\$@"
     fi
 }
 
-# Auto-set TERM to xterm-256color for sudo commands when running under kaku.
+# Auto-set TERM to xterm-256color for sudo commands when running under steklo.
 # sudo usually resets TERMINFO_DIRS, so root processes (e.g. nano) can fail
-# with "unknown terminal type 'kaku'" even though Kaku set TERMINFO_DIRS for the
-# user shell. Set KAKU_SUDO_SKIP_TERM_FIX=1 to disable this behavior.
+# with "unknown terminal type 'steklo'" even though Steklo set TERMINFO_DIRS for the
+# user shell. Set STEKLO_SUDO_SKIP_TERM_FIX=1 to disable this behavior.
 sudo() {
-    if [[ -z "\${KAKU_SUDO_SKIP_TERM_FIX-}" && "\$TERM" == "kaku" ]]; then
+    if [[ -z "\${STEKLO_SUDO_SKIP_TERM_FIX-}" && "\$TERM" == "steklo" ]]; then
         TERM=xterm-256color command sudo "\$@"
     else
         command sudo "\$@"
@@ -717,10 +717,10 @@ sudo() {
 }
 EOF
 
-echo -e "  ${GREEN}✓${NC} ${BOLD}Script${NC}      Generated kaku.zsh init script"
+echo -e "  ${GREEN}✓${NC} ${BOLD}Script${NC}      Generated steklo.zsh init script"
 
 # 4. Configure .zshrc
-SOURCE_LINE="[[ -f \"\$HOME/.config/kaku/zsh/kaku.zsh\" ]] && source \"\$HOME/.config/kaku/zsh/kaku.zsh\" # Kaku Shell Integration"
+SOURCE_LINE="[[ -f \"\$HOME/.config/steklo/zsh/steklo.zsh\" ]] && source \"\$HOME/.config/steklo/zsh/steklo.zsh\" # Steklo Shell Integration"
 
 # Migrate legacy inline block from older versions to the single source-line model.
 cleanup_legacy_inline_block() {
@@ -728,7 +728,7 @@ cleanup_legacy_inline_block() {
 		return
 	fi
 
-	if ! grep -q "^# Kaku Shell Integration$" "$ZSHRC"; then
+	if ! grep -q "^# Steklo Shell Integration$" "$ZSHRC"; then
 		return
 	fi
 
@@ -736,26 +736,26 @@ cleanup_legacy_inline_block() {
 		return
 	fi
 
-	if ! grep -q "KAKU_ZSH_DIR" "$ZSHRC"; then
+	if ! grep -q "STEKLO_ZSH_DIR" "$ZSHRC"; then
 		return
 	fi
 
 	local tmp_file
-	tmp_file="$(mktemp "${TMPDIR:-/tmp}/kaku-zshrc.XXXXXX")"
+	tmp_file="$(mktemp "${TMPDIR:-/tmp}/steklo-zshrc.XXXXXX")"
 
 	if awk '
-BEGIN { in_block = 0; saw_syntax = 0; saw_kaku_var = 0 }
+BEGIN { in_block = 0; saw_syntax = 0; saw_steklo_var = 0 }
 {
-	if (!in_block && $0 == "# Kaku Shell Integration") {
+	if (!in_block && $0 == "# Steklo Shell Integration") {
 		in_block = 1
 		saw_syntax = 0
-		saw_kaku_var = 0
+		saw_steklo_var = 0
 		next
 	}
 
 	if (in_block) {
-		if ($0 ~ /KAKU_ZSH_DIR/) {
-			saw_kaku_var = 1
+		if ($0 ~ /STEKLO_ZSH_DIR/) {
+			saw_steklo_var = 1
 			next
 		}
 
@@ -764,10 +764,10 @@ BEGIN { in_block = 0; saw_syntax = 0; saw_kaku_var = 0 }
 			next
 		}
 
-		if (saw_kaku_var && saw_syntax && $0 ~ /^[[:space:]]*fi[[:space:]]*$/) {
+		if (saw_steklo_var && saw_syntax && $0 ~ /^[[:space:]]*fi[[:space:]]*$/) {
 			in_block = 0
 			saw_syntax = 0
-			saw_kaku_var = 0
+			saw_steklo_var = 0
 			next
 		}
 
@@ -785,19 +785,19 @@ END {
 		if ! cmp -s "$ZSHRC" "$tmp_file"; then
 			backup_zshrc_once
 			mv "$tmp_file" "$ZSHRC"
-			echo -e "  ${GREEN}✓${NC} ${BOLD}Migrate${NC}     Removed legacy inline Kaku block from .zshrc"
+			echo -e "  ${GREEN}✓${NC} ${BOLD}Migrate${NC}     Removed legacy inline Steklo block from .zshrc"
 		else
 			rm -f "$tmp_file"
 		fi
 	else
 		rm -f "$tmp_file"
-		echo -e "${YELLOW}Warning: found legacy Kaku block but failed to migrate it safely; leaving .zshrc unchanged.${NC}"
+		echo -e "${YELLOW}Warning: found legacy Steklo block but failed to migrate it safely; leaving .zshrc unchanged.${NC}"
 	fi
 }
 
 cleanup_legacy_inline_block
 
-has_kaku_source_line() {
+has_steklo_source_line() {
 	if [[ ! -f "$ZSHRC" ]]; then
 		return 1
 	fi
@@ -808,14 +808,14 @@ has_kaku_source_line() {
 	fi
 
 	# Fallback: accept equivalent active source lines while avoiding comment-only matches.
-	grep -Eq '^[[:space:]]*\[\[ -f .+kaku/zsh/kaku\.zsh.+\]\][[:space:]]*&&[[:space:]]*source[[:space:]].*kaku/zsh/kaku\.zsh([[:space:]]|$)' "$ZSHRC"
+	grep -Eq '^[[:space:]]*\[\[ -f .+steklo/zsh/steklo\.zsh.+\]\][[:space:]]*&&[[:space:]]*source[[:space:]].*steklo/zsh/steklo\.zsh([[:space:]]|$)' "$ZSHRC"
 }
 
 # Check if the source line already exists
-if has_kaku_source_line; then
+if has_steklo_source_line; then
 	echo -e "  ${GREEN}✓${NC} ${BOLD}Integrate${NC}   Already linked in .zshrc"
 else
-	# Backup existing .zshrc only if it doesn't have Kaku logic yet
+	# Backup existing .zshrc only if it doesn't have Steklo logic yet
 	backup_zshrc_once
 
 	# Append the single source line

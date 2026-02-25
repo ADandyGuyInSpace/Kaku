@@ -1,20 +1,20 @@
 #!/bin/bash
-# Reset Kaku First Run Experience
-# This script is for testing purposes. It removes persisted Kaku state
-# so that Kaku will trigger the first run setup again.
+# Reset Steklo First Run Experience
+# This script is for testing purposes. It removes persisted Steklo state
+# so that Steklo will trigger the first run setup again.
 
 set -e
 
-CONFIG_DIR="$HOME/.config/kaku"
+CONFIG_DIR="$HOME/.config/steklo"
 STATE_FILE="$CONFIG_DIR/state.json"
 LEGACY_FILES=(
 	"$CONFIG_DIR/.first_run_completed"
-	"$CONFIG_DIR/.kaku_config_version"
-	"$CONFIG_DIR/.kaku_window_geometry"
-	"$CONFIG_DIR/.kaku_window_position"
+	"$CONFIG_DIR/.steklo_config_version"
+	"$CONFIG_DIR/.steklo_window_geometry"
+	"$CONFIG_DIR/.steklo_window_position"
 )
 
-echo "Resetting Kaku First Run..."
+echo "Resetting Steklo First Run..."
 
 if [[ -f "$STATE_FILE" ]]; then
 	rm "$STATE_FILE"
@@ -30,4 +30,4 @@ for file in "${LEGACY_FILES[@]}"; do
 	fi
 done
 
-echo "Now relaunch Kaku to see the First Run experience."
+echo "Now relaunch Steklo to see the First Run experience."

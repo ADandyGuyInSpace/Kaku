@@ -1,5 +1,5 @@
 #!/bin/bash
-# Kaku CLI tools bootstrap
+# Steklo CLI tools bootstrap
 # Installs required external tools via Homebrew and migrates legacy bundled binaries.
 
 set -euo pipefail
@@ -9,7 +9,7 @@ YELLOW='\033[1;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-USER_BIN_DIR="$HOME/.config/kaku/zsh/bin"
+USER_BIN_DIR="$HOME/.config/steklo/zsh/bin"
 MISSING_TOOLS=()
 LEGACY_MIGRATED=0
 BREW_BIN=""
@@ -159,7 +159,7 @@ install_missing_tools() {
 	if [[ -t 0 && -t 1 ]]; then
 		echo ""
 		echo -e "${BOLD}Optional CLI tools${NC}"
-		echo "Kaku can install missing tools with Homebrew:"
+		echo "Steklo can install missing tools with Homebrew:"
 		for tool in "${MISSING_TOOLS[@]}"; do
 			echo "  - $tool"
 		done
